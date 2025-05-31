@@ -30,7 +30,7 @@ User Request → Spring Boot API → Spring AI → OpenAI LLM
 ## Prerequisites
 
 - Java 17 or higher
-- Maven 3.6+
+- Gradle 8.6+ (or use the included wrapper)
 - OpenAI API key
 - GitHub MCP server running (optional for basic functionality)
 
@@ -74,13 +74,17 @@ app:
 
 ```bash
 # Build the project
-mvn clean compile
+./gradlew build
 
 # Run the application
-mvn spring-boot:run
+./gradlew bootRun
 
 # Or run with specific profile
-mvn spring-boot:run -Dspring-boot.run.profiles=dev
+./gradlew bootRun --args='--spring.profiles.active=dev'
+
+# Alternative: Use custom tasks
+./gradlew runDev    # Development profile
+./gradlew runProd   # Production profile
 ```
 
 The application will start on `http://localhost:8080`
@@ -192,20 +196,47 @@ If no MCP server is available, the application will still work but with limited 
 ### Running Tests
 
 ```bash
-mvn test
+./gradlew test
 ```
 
 ### Development Profile
 
 ```bash
-mvn spring-boot:run -Dspring-boot.run.profiles=dev
+./gradlew runDev
+# or
+./gradlew bootRun --args='--spring.profiles.active=dev'
 ```
 
 ### Building for Production
 
 ```bash
-mvn clean package
-java -jar target/spring-ai-mcp-poc-1.0.0-SNAPSHOT.jar
+./gradlew clean build
+java -jar build/libs/spring-ai-mcp-poc-1.0.0-SNAPSHOT.jar
+```
+
+### Gradle Commands
+
+```bash
+# Build project
+./gradlew build
+
+# Run application
+./gradlew bootRun
+
+# Run tests
+./gradlew test
+
+# Clean build
+./gradlew clean
+
+# Generate Gradle wrapper (if needed)
+gradle wrapper --gradle-version 8.6
+
+# Check dependencies
+./gradlew dependencies
+
+# Build info
+./gradlew tasks
 ```
 
 ## Project Structure
@@ -232,6 +263,16 @@ src/
 └── test/
     └── java/
         └── ... # Test classes
+
+# Gradle files
+build.gradle                     # Gradle build script
+settings.gradle                  # Gradle settings
+gradle/
+└── wrapper/
+    ├── gradle-wrapper.properties    # Gradle wrapper config
+    └── gradle-wrapper.jar          # Gradle wrapper JAR
+gradlew                         # Gradle wrapper script (Unix)
+gradlew.bat                     # Gradle wrapper script (Windows)
 ```
 
 ## Technologies Used
@@ -241,7 +282,7 @@ src/
 - **OpenAI GPT-4**: Large Language Model
 - **WebFlux**: Reactive web client for MCP communication
 - **Jackson**: JSON processing
-- **Maven**: Build tool
+- **Gradle 8.6**: Build tool
 
 ## Contributing
 
@@ -272,6 +313,11 @@ This project is licensed under the MIT License.
    - Ensure GitHub token has proper permissions
    - Verify MCP server GitHub configuration
 
+4. **Gradle Issues**
+   - Use `./gradlew --version` to check Gradle version
+   - Run `./gradlew clean build` to clean and rebuild
+   - Check Java version with `java -version`
+
 ### Logs
 
 Check application logs for detailed error information:
@@ -284,9 +330,22 @@ tail -f logs/spring-ai-mcp-poc.log
 export LOGGING_LEVEL_COM_EXAMPLE_SPRINGAIMCP=DEBUG
 ```
 
+### Gradle Wrapper
+
+If you encounter issues with the Gradle wrapper:
+
+```bash
+# Regenerate wrapper files
+gradle wrapper --gradle-version 8.6
+
+# Make gradlew executable on Unix systems
+chmod +x gradlew
+```
+
 ## Support
 
 For issues and questions:
 - Create an issue in this repository
 - Check the Spring AI documentation
 - Review OpenAI API documentation
+- Consult Gradle documentation
