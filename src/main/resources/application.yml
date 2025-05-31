@@ -1,0 +1,104 @@
+# Spring AI MCP PoC Configuration
+
+spring:
+  application:
+    name: spring-ai-mcp-poc
+    
+  ai:
+    openai:
+      # OpenAI API configuration
+      api-key: ${OPENAI_API_KEY:your-openai-api-key-here}
+      base-url: ${OPENAI_BASE_URL:https://api.openai.com}
+      chat:
+        options:
+          model: gpt-4
+          temperature: 0.7
+          max-tokens: 1000
+  
+  # Web configuration
+  web:
+    cors:
+      allowed-origins: "*"
+      allowed-methods: "GET,POST,PUT,DELETE,OPTIONS"
+      allowed-headers: "*"
+      
+# Server configuration
+server:
+  port: 8080
+  servlet:
+    context-path: /
+    
+# Application specific configuration
+app:
+  github:
+    mcp:
+      server:
+        url: ${GITHUB_MCP_SERVER_URL:http://localhost:3000}
+        timeout: 30s
+        
+    # Optional: GitHub token for enhanced MCP operations
+    token: ${GITHUB_TOKEN:}
+    
+  ai:
+    # AI model configuration
+    model:
+      name: gpt-4
+      temperature: 0.7
+      max-tokens: 1000
+      
+    # Tool usage configuration
+    tools:
+      enabled: true
+      timeout: 30s
+      
+# Logging configuration
+logging:
+  level:
+    com.example.springaimcp: INFO
+    org.springframework.ai: DEBUG
+    org.springframework.web.reactive: DEBUG
+  pattern:
+    console: "%d{yyyy-MM-dd HH:mm:ss} - %msg%n"
+    file: "%d{yyyy-MM-dd HH:mm:ss} [%thread] %-5level %logger{36} - %msg%n"
+    
+# Management and monitoring
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,metrics
+  endpoint:
+    health:
+      show-details: always
+      
+# Development profile specific configuration
+---
+spring:
+  config:
+    activate:
+      on-profile: dev
+      
+logging:
+  level:
+    com.example.springaimcp: DEBUG
+    org.springframework.ai: DEBUG
+    
+app:
+  github:
+    mcp:
+      server:
+        url: http://localhost:3000
+        
+---
+spring:
+  config:
+    activate:
+      on-profile: prod
+      
+logging:
+  level:
+    com.example.springaimcp: INFO
+    org.springframework.ai: INFO
+    
+server:
+  port: ${PORT:8080}
