@@ -49,7 +49,7 @@ public class AiMcpService {
             
             // Configure chat options with GitHub MCP functions
             OpenAiChatOptions chatOptions = OpenAiChatOptions.builder()
-                    .withModel("gpt-4")
+                    .withModel("gpt-4.1")
                     .withTemperature(0.7f)
                     .withMaxTokens(1000)
                     .build();

@@ -30,19 +30,19 @@ dependencies {
     implementation("org.springframework.boot:spring-boot-starter-validation")
     implementation("org.springframework.boot:spring-boot-starter-webflux")
     implementation("org.springframework.boot:spring-boot-starter-logging")
-    
+
     // Spring AI Dependencies
     implementation("org.springframework.ai:spring-ai-openai-spring-boot-starter:${property("springAiVersion")}")
-    
+
     // JSON Processing
     implementation("com.fasterxml.jackson.core:jackson-databind")
-    
+
     // Development Tools
     developmentOnly("org.springframework.boot:spring-boot-devtools")
-    
+
     // Annotation Processors
     annotationProcessor("org.springframework.boot:spring-boot-configuration-processor")
-    
+
     // Test Dependencies
     testImplementation("org.springframework.boot:spring-boot-starter-test")
     testImplementation("io.projectreactor:reactor-test")
