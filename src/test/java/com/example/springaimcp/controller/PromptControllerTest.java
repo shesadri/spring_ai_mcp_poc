@@ -224,7 +224,7 @@ class PromptControllerTest {
         mockMvc.perform(get("/api/v1/health"))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.TEXT_PLAIN_VALUE + ";charset=UTF-8"))
-                .andExpected(content().string("Spring AI MCP PoC is running!"));
+                .andExpect(content().string("Spring AI MCP PoC is running!"));
 
         // Verify no service interaction
         verifyNoInteractions(aiMcpService);
@@ -324,7 +324,7 @@ class PromptControllerTest {
                 .header("Origin", "http://localhost:3000")
                 .header("Access-Control-Request-Method", "GET"))
                 .andExpect(status().isOk())
-                .andExpected(header().string("Access-Control-Allow-Origin", "*"));
+                .andExpect(header().string("Access-Control-Allow-Origin", "*"));
     }
 
     @Test
@@ -411,7 +411,7 @@ class PromptControllerTest {
     void testInvalidEndpoint_ShouldReturnNotFound() throws Exception {
         // Act & Assert
         mockMvc.perform(get("/api/v1/invalid"))
-                .andExpected(status().isNotFound());
+                .andExpect(status().isNotFound());
 
         verifyNoInteractions(aiMcpService);
     }
@@ -436,12 +436,12 @@ class PromptControllerTest {
         mockMvc.perform(post("/api/v1/prompt")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(validPromptRequest)))
-                .andExpected(status().isOk())
+                .andExpect(status().isOk())
                 .andExpect(jsonPath("$.response").exists())
                 .andExpect(jsonPath("$.usedMcpTools").exists())
                 .andExpect(jsonPath("$.mcpData").exists())
-                .andExpected(jsonPath("$.response").isString())
-                .andExpected(jsonPath("$.usedMcpTools").isBoolean());
+                .andExpect(jsonPath("$.response").isString())
+                .andExpect(jsonPath("$.usedMcpTools").isBoolean());
     }
 
     // ========== Concurrent Request Tests ==========
