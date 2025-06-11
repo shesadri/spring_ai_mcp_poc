@@ -2,6 +2,7 @@ plugins {
     id("org.springframework.boot") version "3.2.5"
     id("io.spring.dependency-management") version "1.1.4"
     java
+    jacoco
 }
 
 group = "com.example"
@@ -46,6 +47,12 @@ dependencies {
     // Test Dependencies
     testImplementation("org.springframework.boot:spring-boot-starter-test")
     testImplementation("io.projectreactor:reactor-test")
+    testImplementation("org.mockito:mockito-core")
+    testImplementation("org.mockito:mockito-junit-jupiter")
+    testImplementation("org.junit.jupiter:junit-jupiter-api")
+    testImplementation("org.junit.jupiter:junit-jupiter-engine")
+    testImplementation("org.assertj:assertj-core")
+    testImplementation("org.springframework.boot:spring-boot-test-autoconfigure")
 }
 
 dependencyManagement {
@@ -56,6 +63,27 @@ dependencyManagement {
 
 tasks.named<Test>("test") {
     useJUnitPlatform()
+    finalizedBy(tasks.jacocoTestReport)
+}
+
+// Jacoco configuration for test coverage
+tasks.jacocoTestReport {
+    dependsOn(tasks.test)
+    reports {
+        xml.required.set(true)
+        html.required.set(true)
+        csv.required.set(false)
+    }
+}
+
+tasks.jacocoTestCoverageVerification {
+    violationRules {
+        rule {
+            limit {
+                minimum = "0.80".toBigDecimal()
+            }
+        }
+    }
 }
 
 // Custom tasks
@@ -83,4 +111,11 @@ tasks.named<org.springframework.boot.gradle.tasks.bundling.BootJar>("bootJar") {
     enabled = true
     archiveClassifier.set("")
     mainClass.set("com.example.springaimcp.SpringAiMcpApplication")
+}
+
+// Task to run tests with coverage
+tasks.register("testWithCoverage") {
+    dependsOn("test", "jacocoTestReport")
+    group = "verification"
+    description = "Runs tests and generates test coverage report"
 }
