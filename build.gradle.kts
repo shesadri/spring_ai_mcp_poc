@@ -2,6 +2,7 @@ plugins {
     id("org.springframework.boot") version "3.2.5"
     id("io.spring.dependency-management") version "1.1.4"
     java
+    jacoco
 }
 
 group = "com.example"
@@ -45,7 +46,17 @@ dependencies {
 
     // Test Dependencies
     testImplementation("org.springframework.boot:spring-boot-starter-test")
+    testImplementation("org.springframework.boot:spring-boot-test-autoconfigure")
     testImplementation("io.projectreactor:reactor-test")
+    testImplementation("org.mockito:mockito-core")
+    testImplementation("org.mockito:mockito-junit-jupiter")
+    testImplementation("org.junit.jupiter:junit-jupiter-api")
+    testImplementation("org.junit.jupiter:junit-jupiter-engine")
+    testImplementation("org.assertj:assertj-core")
+    testImplementation("com.jayway.jsonpath:json-path")
+    testImplementation("org.hamcrest:hamcrest")
+    testImplementation("org.springframework:spring-test")
+    testImplementation("org.springframework:spring-webmvc")
 }
 
 dependencyManagement {
@@ -56,6 +67,27 @@ dependencyManagement {
 
 tasks.named<Test>("test") {
     useJUnitPlatform()
+    finalizedBy(tasks.jacocoTestReport)
+}
+
+// Jacoco configuration for test coverage
+tasks.jacocoTestReport {
+    dependsOn(tasks.test)
+    reports {
+        xml.required.set(true)
+        html.required.set(true)
+        csv.required.set(false)
+    }
+}
+
+tasks.jacocoTestCoverageVerification {
+    violationRules {
+        rule {
+            limit {
+                minimum = "0.85".toBigDecimal()
+            }
+        }
+    }
 }
 
 // Custom tasks
@@ -83,4 +115,21 @@ tasks.named<org.springframework.boot.gradle.tasks.bundling.BootJar>("bootJar") {
     enabled = true
     archiveClassifier.set("")
     mainClass.set("com.example.springaimcp.SpringAiMcpApplication")
+}
+
+// Task to run controller tests specifically
+tasks.register("testControllers") {
+    dependsOn("test")
+    group = "verification"
+    description = "Runs controller tests specifically"
+    doFirst {
+        println("Running controller-specific tests...")
+    }
+}
+
+// Task to run tests with coverage specifically for controllers
+tasks.register("testControllersWithCoverage") {
+    dependsOn("test", "jacocoTestReport")
+    group = "verification"
+    description = "Runs controller tests and generates coverage report"
 }
