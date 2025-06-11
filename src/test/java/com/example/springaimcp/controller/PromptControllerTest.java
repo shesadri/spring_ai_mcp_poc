@@ -105,7 +105,7 @@ class PromptControllerTest {
         mockMvc.perform(post("/api/v1/prompt")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(nullRequest)))
-                .andExpected(status().isBadRequest());
+                .andExpect(status().isBadRequest());
 
         // Verify service was not called
         verify(aiMcpService, never()).processPrompt(any());
@@ -202,7 +202,7 @@ class PromptControllerTest {
     void testProcessPrompt_WithUnicodeCharacters_ShouldHandleSuccessfully() throws Exception {
         // Arrange
         PromptRequest unicodeRequest = new PromptRequest();
-        unicodeRequest.setPrompt("GitHub 查询 with unicode characters: 日本語, العربية, 中文");
+        unicodeRequest.setPrompt("GitHub query with unicode characters: 日本語, العربية, 中文");
 
         when(aiMcpService.processPrompt(any(PromptRequest.class))).thenReturn(mockPromptResponse);
 
@@ -224,7 +224,7 @@ class PromptControllerTest {
         mockMvc.perform(get("/api/v1/health"))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.TEXT_PLAIN_VALUE + ";charset=UTF-8"))
-                .andExpect(content().string("Spring AI MCP PoC is running!"));
+                .andExpected(content().string("Spring AI MCP PoC is running!"));
 
         // Verify no service interaction
         verifyNoInteractions(aiMcpService);
@@ -281,7 +281,7 @@ class PromptControllerTest {
         // Act & Assert
         mockMvc.perform(get("/api/v1/mcp/tools"))
                 .andExpect(status().isOk())
-                .andExpected(content().contentType(MediaType.APPLICATION_JSON))
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
                 .andExpect(jsonPath("$").isArray())
                 .andExpect(jsonPath("$.length()").value(0));
 
@@ -296,14 +296,14 @@ class PromptControllerTest {
         // Act & Assert
         mockMvc.perform(get("/api/v1/mcp/tools"))
                 .andExpect(status().isInternalServerError())
-                .andExpected(content().contentType(MediaType.TEXT_PLAIN_VALUE + ";charset=UTF-8"))
+                .andExpect(content().contentType(MediaType.TEXT_PLAIN_VALUE + ";charset=UTF-8"))
                 .andExpect(content().string("Error fetching MCP tools: MCP service unavailable"));
 
         verify(aiMcpService, times(1)).getAvailableTools();
     }
 
     @Test
-    void testGetMcpTools_WithNullResponse_ShouldReturnInternalServerError() throws Exception {
+    void testGetMcpTools_WithNullResponse_ShouldReturnNull() throws Exception {
         // Arrange
         when(aiMcpService.getAvailableTools()).thenReturn(null);
 
@@ -324,7 +324,7 @@ class PromptControllerTest {
                 .header("Origin", "http://localhost:3000")
                 .header("Access-Control-Request-Method", "GET"))
                 .andExpect(status().isOk())
-                .andExpect(header().string("Access-Control-Allow-Origin", "*"));
+                .andExpected(header().string("Access-Control-Allow-Origin", "*"));
     }
 
     @Test
@@ -391,7 +391,7 @@ class PromptControllerTest {
     void testHealthEndpoint_WithPostMethod_ShouldReturnMethodNotAllowed() throws Exception {
         // Act & Assert
         mockMvc.perform(post("/api/v1/health"))
-                .andExpected(status().isMethodNotAllowed());
+                .andExpect(status().isMethodNotAllowed());
 
         verify(aiMcpService, never()).getAvailableTools();
     }
@@ -411,7 +411,7 @@ class PromptControllerTest {
     void testInvalidEndpoint_ShouldReturnNotFound() throws Exception {
         // Act & Assert
         mockMvc.perform(get("/api/v1/invalid"))
-                .andExpect(status().isNotFound());
+                .andExpected(status().isNotFound());
 
         verifyNoInteractions(aiMcpService);
     }
@@ -436,11 +436,11 @@ class PromptControllerTest {
         mockMvc.perform(post("/api/v1/prompt")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(validPromptRequest)))
-                .andExpect(status().isOk())
+                .andExpected(status().isOk())
                 .andExpect(jsonPath("$.response").exists())
                 .andExpect(jsonPath("$.usedMcpTools").exists())
                 .andExpect(jsonPath("$.mcpData").exists())
-                .andExpect(jsonPath("$.response").isString())
+                .andExpected(jsonPath("$.response").isString())
                 .andExpected(jsonPath("$.usedMcpTools").isBoolean());
     }
 
